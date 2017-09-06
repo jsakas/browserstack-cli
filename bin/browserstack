@@ -1,0 +1,27 @@
+import argparse
+
+if __name__ == '__main__':
+  parser = argparse.ArgumentParser()
+
+  parser.add_argument('action', type=str,
+                      help='which action should be taken')
+
+  parser.add_argument('-o', '--os', type=str,
+                      help='os:version')
+
+  parser.add_argument('-b', '--browser', type=str,
+                      help='browser:version')
+
+  parser.add_argument('-d', '--device', type=str,
+                      help='device name')
+
+  parser.add_argument('-p', '--pid', type=int,
+                      help='process id')
+
+  args = parser.parse_args()
+
+  if args.action == 'launch':
+      print('launch browser {}'.format(args.os))
+
+  if args.action == 'kill':
+      print('kil process {}'.format(args.pid))
