@@ -1,5 +1,8 @@
 import argparse
 
+from browserstack.api import BrowserStackAPIClient
+
+
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
 
@@ -7,21 +10,58 @@ if __name__ == '__main__':
                       help='which action should be taken')
 
   parser.add_argument('-o', '--os', type=str,
-                      help='os:version')
+                      help='operating system')
+
+  parser.add_argument('-ov', '--os_version', type=str,
+                      help='operating system version')
 
   parser.add_argument('-b', '--browser', type=str,
-                      help='browser:version')
+                      help='browser')
+
+  parser.add_argument('-bv', '--browser_version', type=str,
+                      help='browser')
 
   parser.add_argument('-d', '--device', type=str,
                       help='device name')
+
+  parser.add_argument('-u', '--url', type=str,
+                      help='url to request once browser is launched')
+
+  parser.add_argument('-t', '--timeout', type=int,
+                      help='timeout')
 
   parser.add_argument('-p', '--pid', type=int,
                       help='process id')
 
   args = parser.parse_args()
 
+  api_client = BrowserStackAPIClient()
+
   if args.action == 'launch':
-      print('launch browser {}'.format(args.os))
+      payload = {
+        'os': args.os,
+        'os_version': args.os_version,
+        'browser': args.browser,
+        'browser_version': args.browser_version,
+        'device': args.device,
+        'url': args.url,
+        'timeout': args.timeout
+      }
+
+      print('Launch browser with payload {}'.format(payload))
+      results = api_client.launch_browser(payload)
+      print(results)
+
+  if args.action == 'worker':
+      worker_id = args.pid
+      results = api_client.get_worker(worker_id)
+      print(results)
 
   if args.action == 'kill':
-      print('kil process {}'.format(args.pid))
+      print('Kill process {}'.format(args.pid))
+      worker_id = args.pid
+      results = api_client.get_worker(worker_id)
+      print(results)
+
+  if args.action == 'browsers':
+      api_client.get_browsers()
