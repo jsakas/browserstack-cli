@@ -13,7 +13,7 @@ It works with Python 3.
 ```
 git clone https://github.com/jsakas/browserstack-cli
 cd browserstack-cli
-pip install .
+pip3 install .
 ```
 
 ## Authentication
