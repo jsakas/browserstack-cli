@@ -15,16 +15,18 @@ class BrowserStackAPIClient:
     self.auth_headers = { 'Authorization' : 'Basic %s' %  authString.decode('ascii') }
     self.connection = http.client.HTTPSConnection('api.browserstack.com')
 
+  def wait(self):
+    input('Waiting...')
 
   def launch_browser(self, payload):
     self.connection.request('POST', '/4/worker', 
       urllib.parse.urlencode(payload), 
       headers=self.auth_headers
     )
-
     response = self.connection.getresponse()
     results = response.read()
-    results = json.loads(results.decode('utf-8'))
+
+    if self.attach: self.wait()
     return results
 
   def get_worker(self, worker_id):
@@ -41,7 +43,7 @@ class BrowserStackAPIClient:
     results = response.read()
     return results
 
-  def get_browsers(self):  
+  def get_browsers(self):
     self.connection.request('GET', '/4/browsers?flat=true', headers=self.auth_headers)
     response = self.connection.getresponse()
     results = response.read()
@@ -49,8 +51,13 @@ class BrowserStackAPIClient:
     # TODO - the following is just quick and dirty way to print a table, this should be refactored
     #
     # first print the keys
+    column_length = 20
     for key in json.loads(results.decode('utf-8'))[0]:
-      print(key.ljust(30), end='')
+      print(key.ljust(column_length), end='')
+    print('')
+
+    for key in json.loads(results.decode('utf-8'))[0]:
+      print(''.ljust(column_length -1, '-').ljust(column_length, ' '), end='')
     print('')
     
     # then print the values
@@ -59,8 +66,9 @@ class BrowserStackAPIClient:
         value = result.get(key, '')
         if not value:
           value = ''
-        print(value.ljust(30), end='')
+        print(value.ljust(column_length), end='')
       print('')
+    print('')
 
     return results
 

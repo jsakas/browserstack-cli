@@ -1,37 +1,80 @@
-import argparse
+import sys, argparse
 
 from browserstack.api import BrowserStackAPIClient
 
+def art():
+  print("")
+  print("| |__  _ __ _____      _____  ___ _ __ ___| |_ __ _  ___| | __   ___| (_)")
+  print("| '_ \| '__/ _ \ \ /\ / / __|/ _ \ '__/ __| __/ _` |/ __| |/ /  / __| | |")
+  print("| |_) | | | (_) \ V  V /\__ \  __/ |  \__ \ || (_| | (__|   <  | (__| | |")
+  print("|_.__/|_|  \___/ \_/\_/ |___/\___|_|  |___/\__\__,_|\___|_|\_\  \___|_|_|")
+  print("")
 
 if __name__ == '__main__':
-  parser = argparse.ArgumentParser()
+  parser = argparse.ArgumentParser(
+    description='A CLI wrapper for the BrowserStack API',
+    formatter_class=argparse.RawTextHelpFormatter,
+    add_help=False
+  )
 
   parser.add_argument('action', type=str,
-                      help='which action should be taken')
+                      help='''Which action should be taken? 
+
+Available commands:
+
+launch
+kill
+worker
+browsers''')
+
+  parser.add_argument('-h', '--help', action='store_true',
+                      help='''Show this menu and quit
+                      ''')
 
   parser.add_argument('-o', '--os', type=str,
-                      help='operating system')
+                      help='''Operating system
+                      ''')
 
   parser.add_argument('-ov', '--os_version', type=str,
-                      help='operating system version')
+                      help='''Operating system version
+                      ''')
 
   parser.add_argument('-b', '--browser', type=str,
-                      help='browser')
+                      help='''Browser
+                      ''')
 
   parser.add_argument('-bv', '--browser_version', type=str,
-                      help='browser')
+                      help='''Browser version
+                      ''')
 
   parser.add_argument('-d', '--device', type=str,
-                      help='device name')
+                      help='''Device name
+                      ''')
 
   parser.add_argument('-u', '--url', type=str,
-                      help='url to request once browser is launched')
+                      help='''URL to request once browser is launched
+                      ''')
 
   parser.add_argument('-t', '--timeout', type=int,
-                      help='timeout')
+                      help='''Timeout
+                      ''')
 
   parser.add_argument('-p', '--pid', type=int,
-                      help='process id')
+                      help='''Process or worker id
+                      ''')
+
+  parser.add_argument('-a', '--attach', action='store_true',
+                      help='''If given, the program will wait after launching a browser before 
+exiting the program. This is useful when working with test runners 
+such as Testem.
+
+''')
+
+
+  if len(sys.argv) == 1 or '--help' in sys.argv or '-h' in sys.argv:
+      art()
+      parser.print_help()
+      sys.exit(1)
 
   args = parser.parse_args()
 
@@ -47,8 +90,6 @@ if __name__ == '__main__':
         'url': args.url,
         'timeout': args.timeout
       }
-
-      print('Launch browser with payload {}'.format(payload))
       results = api_client.launch_browser(payload)
       print(results)
 
