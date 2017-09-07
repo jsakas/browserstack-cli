@@ -18,13 +18,23 @@ pip3 install .
 
 ## Authentication
 
-Requests must be signed with a username and password. These are stored in environment variabes:
+You must store your BrowserStack username and API key. 
+
+These can be stored in the environment:
 
 ```
 export BROWSERSTACK_API_USERNAME=<username>
 export BROWSERSTACK_API_KEY=<key>
 ```
 
+Or in `.browserstack.json`. The program looks for the config file first in your home directory, then in the current working directory.
+
+```
+{
+  "username": "...",
+  "key": "..."
+}
+```
 
 ## Usage
 
