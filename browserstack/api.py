@@ -48,8 +48,9 @@ class BrowserStackAPIClient:
       headers=self.auth_headers
     )
     response = self.connection.getresponse()
-    results = response.read()
+    self.handle_api_response(response)
 
+    results = response.read()
     if attach: self.wait()
     
     return results
@@ -74,6 +75,12 @@ class BrowserStackAPIClient:
     results = response.read()
     self.print_table(json.loads(results.decode('utf-8')), output_filter)
     return results
+
+  def handle_api_response(self, response):
+    if response.code != 200:
+      print('API returned a non 200 response code: {}'.format(response.code))
+      print(response.read())
+      exit()
 
   def print_table(self, data, row_filter={}):
     row_filter = dict(filter(lambda item: item[1] is not None, row_filter.items()))
