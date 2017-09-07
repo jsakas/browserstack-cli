@@ -22,7 +22,7 @@ class BrowserStackAPIClient:
 
     # look for .browserstackrc, first in ~/
     try:
-      f = open(os.path.join(os.path.expanduser('~'),'.browserstackrc'))
+      f = open(os.path.join(os.path.expanduser('~'),'.browserstack.json'))
       credentials_object = json.loads(f.read())
       return credentials_object['username'], credentials_object['key']
     except Exception as e:
@@ -30,7 +30,7 @@ class BrowserStackAPIClient:
 
     # ...then in current working directory
     try:
-      f = open(os.path.join(os.getcwd(),'.browserstackrc'))
+      f = open(os.path.join(os.getcwd(),'.browserstack.json'))
       credentials_object = json.loads(f.read())
       return credentials_object['username'], credentials_object['key']
     except Exception as e:
@@ -42,7 +42,7 @@ class BrowserStackAPIClient:
   def wait(self):
     input('Waiting...')
 
-  def launch_browser(self, payload):
+  def launch_browser(self, payload, attach=False):
     self.connection.request('POST', '/4/worker', 
       urllib.parse.urlencode(payload), 
       headers=self.auth_headers
@@ -50,7 +50,8 @@ class BrowserStackAPIClient:
     response = self.connection.getresponse()
     results = response.read()
 
-    if self.attach: self.wait()
+    if attach: self.wait()
+    
     return results
 
   def get_worker(self, worker_id):

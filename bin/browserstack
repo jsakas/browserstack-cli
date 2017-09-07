@@ -92,7 +92,7 @@ such as Testem.
         'url': args.url,
         'timeout': args.timeout
       }
-      results = api_client.launch_browser(payload)
+      results = api_client.launch_browser(payload, args.attach)
       print(results)
 
   if args.action == 'worker':
