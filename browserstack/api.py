@@ -67,32 +67,32 @@ class BrowserStackAPIClient:
     results = response.read()
     return results
 
-  def get_browsers(self):
+  def get_browsers(self, output_filter={}):
     self.connection.request('GET', '/4/browsers?flat=true', headers=self.auth_headers)
     response = self.connection.getresponse()
     results = response.read()
-
-    # TODO - the following is just quick and dirty way to print a table, this should be refactored
-    #
-    # first print the keys
-    column_length = 20
-    for key in json.loads(results.decode('utf-8'))[0]:
-      print(key.ljust(column_length), end='')
-    print('')
-
-    for key in json.loads(results.decode('utf-8'))[0]:
-      print(''.ljust(column_length -1, '-').ljust(column_length, ' '), end='')
-    print('')
-    
-    # then print the values
-    for result in json.loads(results.decode('utf-8')):
-      for key in result:
-        value = result.get(key, '')
-        if not value:
-          value = ''
-        print(value.ljust(column_length), end='')
-      print('')
-    print('')
-
+    self.print_table(json.loads(results.decode('utf-8')), output_filter)
     return results
 
+  def print_table(self, data, row_filter={}):
+    row_filter = dict(filter(lambda item: item[1] is not None, row_filter.items()))
+
+    column_length = 20
+
+    # table header
+    print(''.join([column.ljust(column_length) for column in data[0].keys()]))
+    print(''.join([''.ljust(column_length, '-') for column in data[0].keys()]))
+
+    # table values
+    for result in data:
+      try:
+        # filter out rows if there is a filter
+        if row_filter:
+          for f in row_filter.keys():
+            if row_filter[f].lower() not in result[f].lower():
+              raise Exception('Filtered row')
+
+        row = [str(key).replace('None', '') for key in result.values()]
+        print(''.join(column.ljust(column_length) for column in row))
+      except Exception as e:
+        continue

@@ -107,4 +107,11 @@ such as Testem.
       print(results)
 
   if args.action == 'browsers':
-      api_client.get_browsers()
+      output_filter = {
+        'os': args.os,
+        'os_version': args.os_version,
+        'browser': args.browser,
+        'browser_version': args.browser_version,
+        'device': args.device,
+      }
+      api_client.get_browsers(output_filter)
