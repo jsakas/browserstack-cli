@@ -39,10 +39,7 @@ class BrowserStackAPIClient:
     # if we made it this far, something is wrong
     raise Exception('BrowserStack credentials could not be found.')
 
-  def wait(self):
-    input('Waiting...')
-
-  def launch_browser(self, payload, attach=False):
+  def launch_browser(self, payload):
     self.connection.request('POST', '/4/worker', 
       urllib.parse.urlencode(payload), 
       headers=self.auth_headers
@@ -51,7 +48,6 @@ class BrowserStackAPIClient:
     self.handle_api_response(response)
 
     results = response.read()
-    if attach: self.wait()
     
     return results
 

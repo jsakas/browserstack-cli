@@ -93,8 +93,11 @@ such as Testem.
         'url': args.url,
         'timeout': args.timeout
       }
-      results = api_client.launch_browser(payload, args.attach)
+      results = api_client.launch_browser(payload)
       print(results)
+
+      if args.attach:
+        input('Waiting for user input to exit...')
 
   if args.action == 'workers':
       results = api_client.get_workers()
