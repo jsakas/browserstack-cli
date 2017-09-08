@@ -26,6 +26,7 @@ Available commands:
 
 launch
 kill
+workers
 worker
 browsers''')
 
@@ -95,6 +96,9 @@ such as Testem.
       results = api_client.launch_browser(payload, args.attach)
       print(results)
 
+  if args.action == 'workers':
+      results = api_client.get_workers()
+
   if args.action == 'worker':
       worker_id = args.pid
       results = api_client.get_worker(worker_id)
@@ -103,7 +107,7 @@ such as Testem.
   if args.action == 'kill':
       print('Kill process {}'.format(args.pid))
       worker_id = args.pid
-      results = api_client.get_worker(worker_id)
+      results = api_client.kill_worker(worker_id)
       print(results)
 
   if args.action == 'browsers':

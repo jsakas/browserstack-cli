@@ -55,6 +55,13 @@ class BrowserStackAPIClient:
     
     return results
 
+  def get_workers(self):
+    self.connection.request('GET', '/4/workers', headers=self.auth_headers)
+    response = self.connection.getresponse()
+    results = response.read()
+    self.print_table(json.loads(results.decode('utf-8')))
+    return results  
+
   def get_worker(self, worker_id):
     endpoint = '/4/worker/{}'.format(worker_id)
     self.connection.request('GET', endpoint, headers=self.auth_headers)
@@ -88,8 +95,8 @@ class BrowserStackAPIClient:
     column_length = 20
 
     # table header
-    print(''.join([column.ljust(column_length) for column in data[0].keys()]))
-    print(''.join([''.ljust(column_length, '-') for column in data[0].keys()]))
+    print(''.join([column.ljust(column_length)[:column_length] for column in data[0].keys()]))
+    print(''.join([''.ljust(column_length, '-')[:column_length] for column in data[0].keys()]))
 
     # table values
     for result in data:
@@ -101,6 +108,6 @@ class BrowserStackAPIClient:
               raise Exception('Filtered row')
 
         row = [str(key).replace('None', '') for key in result.values()]
-        print(''.join(column.ljust(column_length) for column in row))
+        print(' '.join(column.ljust(column_length)[:column_length-1] for column in row))
       except Exception as e:
         continue
