@@ -47,8 +47,7 @@ class BrowserStackAPIClient:
     response = self.connection.getresponse()
     self.handle_api_response(response)
 
-    results = response.read()
-    
+    results = response.read().decode('utf-8')
     return results
 
   def get_workers(self):
@@ -62,21 +61,21 @@ class BrowserStackAPIClient:
     endpoint = '/4/worker/{}'.format(worker_id)
     self.connection.request('GET', endpoint, headers=self.auth_headers)
     response = self.connection.getresponse()
-    results = response.read()
+    results = response.read().decode('utf-8')
     return results
 
   def kill_worker(self, worker_id):
     endpoint = '/4/worker/{}'.format(worker_id)
     self.connection.request('DELETE', endpoint, headers=self.auth_headers)
     response = self.connection.getresponse()
-    results = response.read()
+    results = response.read().decode('utf-8')
     return results
 
   def get_browsers(self, output_filter={}):
     self.connection.request('GET', '/4/browsers?flat=true', headers=self.auth_headers)
     response = self.connection.getresponse()
-    results = response.read()
-    self.print_table(json.loads(results.decode('utf-8')), output_filter)
+    results = response.read().decode('utf-8')
+    self.print_table(json.loads(results), output_filter)
     return results
 
   def handle_api_response(self, response):
@@ -86,6 +85,10 @@ class BrowserStackAPIClient:
       exit()
 
   def print_table(self, data, row_filter={}):
+    if not len(data):
+      print('No results to show.')
+      return
+
     row_filter = dict(filter(lambda item: item[1] is not None, row_filter.items()))
 
     column_length = 20
